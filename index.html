@@ -1,0 +1,1740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MODEL — Fresha Sales Onboarding</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #F7F9FC;
+      --card:      #FFFFFF;
+      --card2:     #F0F4F9;
+      --border:    #E2E8F0;
+      --green:     #00956A;
+      --green-dim: #00B67A18;
+      --cyan:      #0891B2;
+      --cyan-dim:  #06B6D418;
+      --orange:    #EA6A0A;
+      --orange-dim:#F9731618;
+      --purple:    #7C3AED;
+      --purple-dim:#8B5CF618;
+      --blue:      #2563EB;
+      --blue-dim:  #3B82F618;
+      --white:     #1A2238;
+      --muted:     #64748B;
+      --tag-trainer: #EA6A0A;
+      --tag-manager: #00956A;
+      --tag-both:    #7C3AED;
+      font-size: 15px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: linear-gradient(135deg, #FFFFFF 0%, #F0FAF5 100%);
+      border-bottom: 2px solid #00B67A30;
+      padding: 28px 32px 24px;
+    }
+    .header-inner {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+    .logo-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px #00B67A60;
+    }
+    .brand {
+      font-size: 11px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--green);
+      font-weight: 600;
+    }
+    h1 {
+      font-size: clamp(22px, 4vw, 32px);
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.6;
+    }
+
+    /* MODEL legend */
+    .model-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 12px 5px 8px;
+      font-size: 12px;
+    }
+    .legend-letter {
+      font-weight: 800;
+      font-size: 14px;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+    }
+    .legend-text { color: var(--muted); }
+
+    /* ── WEEK NAVIGATION ── */
+    .week-nav-wrap {
+      background: #FFFFFF;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .week-nav {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 32px;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .week-nav::-webkit-scrollbar { display: none; }
+    .week-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      padding: 14px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: color 0.2s, border-color 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+    .week-btn:hover { color: var(--white); }
+    .week-btn.active {
+      color: var(--white);
+      border-bottom-color: var(--green);
+    }
+    .week-btn .wk-num {
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* ── MAIN CONTENT ── */
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 32px 64px;
+    }
+
+    .week-panel { display: none; }
+    .week-panel.active { display: block; }
+
+    /* Week header */
+    .week-header {
+      margin-bottom: 28px;
+    }
+    .week-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .week-number {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .led-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 12px;
+      letter-spacing: 0.5px;
+    }
+    .led-trainer  { background: #F9731618; color: var(--orange); border: 1px solid #F9731630; }
+    .led-manager  { background: #00B67A18; color: var(--green);  border: 1px solid #00B67A30; }
+    .led-both     { background: #8B5CF618; color: var(--purple); border: 1px solid #8B5CF630; }
+    .week-theme {
+      font-size: clamp(17px, 3vw, 22px);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.3;
+    }
+    .week-desc {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 6px;
+      line-height: 1.6;
+      max-width: 680px;
+    }
+
+    /* ── MODEL CARDS ── */
+    .model-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .model-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s;
+    }
+    .card-header:hover { background: #F8FAFC; }
+    .card-letter {
+      width: 42px; height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .card-title-group { flex: 1; }
+    .card-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--white);
+    }
+    .card-owner {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .chevron {
+      color: var(--muted);
+      font-size: 18px;
+      transition: transform 0.25s;
+      flex-shrink: 0;
+    }
+    .model-card.open .chevron { transform: rotate(180deg); }
+
+    .card-body {
+      display: none;
+      padding: 0 20px 20px 20px;
+      border-top: 1px solid var(--border);
+    }
+    .model-card.open .card-body { display: block; }
+
+    .ideas-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 16px;
+    }
+    .idea-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      background: #F8FAFC;
+      border: 1px solid #EEF2F7;
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+    .idea-num {
+      font-size: 11px;
+      font-weight: 700;
+      min-width: 20px;
+      padding-top: 1px;
+      opacity: 0.7;
+    }
+    .idea-text {
+      font-size: 13.5px;
+      color: #374151;
+      line-height: 1.6;
+    }
+    .idea-text strong {
+      color: #111827;
+      font-weight: 600;
+    }
+
+    /* ── READINESS CHECKPOINT ── */
+    .checkpoint-card {
+      background: linear-gradient(135deg, #F0FAF5 0%, #F5F0FF 100%);
+      border: 1px solid #00B67A30;
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .checkpoint-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .checkpoint-icon {
+      width: 38px; height: 38px;
+      background: #00B67A18;
+      border: 1px solid #00B67A40;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .checkpoint-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--green);
+    }
+    .checkpoint-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .checkpoint-content {
+      font-size: 13.5px;
+      color: #374151;
+      line-height: 1.7;
+    }
+    .checkpoint-focuses {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .focus-tag {
+      background: #00B67A14;
+      border: 1px solid #00B67A30;
+      color: #007A52;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 12px;
+    }
+
+    /* ── MODEL FRAMEWORKS BADGE ROW ── */
+    .frameworks-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .framework-badge {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 12px;
+      font-size: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .fw-acronym {
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+    }
+    .fw-divider {
+      color: #CBD5E1;
+      font-weight: 300;
+    }
+    .fw-stage {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .fw-row-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 600;
+      color: var(--muted);
+      align-self: center;
+      margin-right: 2px;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      header, main { padding-left: 16px; padding-right: 16px; }
+      .week-nav { padding: 0 16px; }
+      .week-btn { padding: 12px 14px; font-size: 12px; }
+      .card-letter { width: 36px; height: 36px; font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo-row">
+      <div class="logo-dot"></div>
+      <span class="brand">Fresha Sales Enablement</span>
+    </div>
+    <h1>The MODEL Framework</h1>
+    <p class="subtitle">A six-week manager guide for onboarding sales reps — coaching activities, observation tasks, discussions, reflections, and live application ideas for every week of the programme.</p>
+
+    <div class="model-legend">
+      <div class="legend-item">
+        <span class="legend-letter" style="background:#00B67A18;color:#00956A;">M</span>
+        <span class="legend-text">Manager Coaching</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-letter" style="background:#06B6D418;color:#0891B2;">O</span>
+        <span class="legend-text">Observation Task</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-letter" style="background:#F9731618;color:#EA6A0A;">D</span>
+        <span class="legend-text">Discussion</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-letter" style="background:#8B5CF618;color:#7C3AED;">E</span>
+        <span class="legend-text">Evaluation &amp; Reflection</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-letter" style="background:#3B82F618;color:#2563EB;">L</span>
+        <span class="legend-text">Live Application</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- WEEK NAVIGATION -->
+<div class="week-nav-wrap">
+  <nav class="week-nav" role="tablist">
+    <button class="week-btn active" onclick="showWeek(1)" role="tab">
+      <span class="wk-num">Week 1</span>
+      <span>Pipeline &amp; Discovery</span>
+    </button>
+    <button class="week-btn" onclick="showWeek(2)" role="tab">
+      <span class="wk-num">Week 2</span>
+      <span>Demo &amp; Close</span>
+    </button>
+    <button class="week-btn" onclick="showWeek(3)" role="tab">
+      <span class="wk-num">Week 3</span>
+      <span>First Solo Calls</span>
+    </button>
+    <button class="week-btn" onclick="showWeek(4)" role="tab">
+      <span class="wk-num">Week 4</span>
+      <span>Demo Confidence</span>
+    </button>
+    <button class="week-btn" onclick="showWeek(5)" role="tab">
+      <span class="wk-num">Week 5</span>
+      <span>Pipeline &amp; Closing</span>
+    </button>
+    <button class="week-btn" onclick="showWeek(6)" role="tab">
+      <span class="wk-num">Week 6</span>
+      <span>Independence</span>
+    </button>
+  </nav>
+</div>
+
+<!-- MAIN -->
+<main>
+
+  <!-- ═══════════════ WEEK 1 ═══════════════ -->
+  <section class="week-panel active" id="week-1">
+    <div class="week-header">
+      <div class="week-meta">
+        <span class="week-number">Week 1 of 6</span>
+        <span class="led-badge led-trainer">Trainer-Led</span>
+      </div>
+      <div class="week-theme">Pipeline, Sales Process, Preparation, Openers &amp; Discovery</div>
+      <div class="week-desc">The foundation week. Reps are introduced to Fresha's layered sales methodology — GAP selling, the 4T framework, and insight-based openers. Your role as manager is to welcome them into the coaching relationship and make the training land in the real world.</div>
+
+      <div class="frameworks-row">
+        <span class="fw-row-label">Models:</span>
+        <div class="framework-badge">
+          <span class="fw-acronym" style="color:#00956A;">G.A.P.</span>
+          <span class="fw-divider">|</span>
+          <span class="fw-stage">Overarching Methodology</span>
+        </div>
+        <div class="framework-badge">
+          <span class="fw-acronym" style="color:#0891B2;">D.I.A.L.</span>
+          <span class="fw-divider">|</span>
+          <span class="fw-stage">Pre-Call Prep</span>
+        </div>
+        <div class="framework-badge">
+          <span class="fw-acronym" style="color:#7C3AED;">O.P.E.N.</span>
+          <span class="fw-divider">|</span>
+          <span class="fw-stage">Call Openers</span>
+        </div>
+        <div class="framework-badge">
+          <span class="fw-acronym" style="color:#EA6A0A;">4T</span>
+          <span class="fw-divider">|</span>
+          <span class="fw-stage">Discovery</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="model-grid">
+
+      <!-- M -->
+      <div class="model-card open">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#00B67A18;color:#00956A;">M</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#00956A;">Manager Coaching</div>
+            <div class="card-title">What to coach this week</div>
+            <div class="card-owner">Led by: You (Manager)</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#00956A;">01</span>
+              <span class="idea-text"><strong>Set up the coaching relationship.</strong> In your first 1:1, agree on how you'll work together — frequency of check-ins, how you'll share feedback, and what a great first six weeks looks like to both of you. Make it a conversation, not a briefing.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#00956A;">02</span>
+              <span class="idea-text"><strong>Coach the GAP selling mindset early.</strong> Share this one idea from your own experience: "Your job on every call is to understand their world before you mention a single feature." Tell a story from a time that made a difference for you.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#00956A;">03</span>
+              <span class="idea-text"><strong>Review call preparation together.</strong> Before the rep attempts any early calls, sit down and walk through what good call prep looks like at Fresha — what research to do, what to plan for Today / Trouble / True Cost / Tomorrow, and what a strong opener sounds like.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#00956A;">04</span>
+              <span class="idea-text"><strong>Introduce the 4T coaching lens.</strong> Let them know this is the framework you'll use to give them feedback on every call going forward. Draw it out with them: Today → Trouble → True Cost → Tomorrow. Ask: "Which stage do you think will feel hardest for you?"</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- O -->
+      <div class="model-card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#06B6D418;color:#0891B2;">O</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#0891B2;">Observation Task</div>
+            <div class="card-title">What the rep should observe this week</div>
+            <div class="card-owner">Arranged by: You (Manager)</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#0891B2;">01</span>
+              <span class="idea-text"><strong>Shadow a live discovery call.</strong> Arrange for the rep to sit in (muted) on one of your discovery calls or a senior rep's. This is their first sight of the methodology in action — make it count.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#0891B2;">02</span>
+              <span class="idea-text"><strong>Give them a focus card before the call.</strong> Ask them to listen specifically for the 4T stages: "When does Today become Trouble? When does the rep shift to True Cost? Note down two or three questions that really opened the prospect up."</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#0891B2;">03</span>
+              <span class="idea-text"><strong>Debrief within 24 hours.</strong> Ask three questions: What did they notice? What surprised them? What's one thing they want to try in their own calls? This embeds the observation — without the debrief, it's just watching.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#0891B2;">04</span>
+              <span class="idea-text"><strong>Observe the opener in action.</strong> Ask them to pay specific attention to how the insight-based opener creates curiosity — what is it about the way it's delivered that earns the right to ask deeper questions?</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- D -->
+      <div class="model-card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#F9731618;color:#EA6A0A;">D</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#EA6A0A;">Discussion</div>
+            <div class="card-title">Trainer-led group discussions</div>
+            <div class="card-owner">Led by: Trainer</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#EA6A0A;">01</span>
+              <span class="idea-text"><strong>Sales process walkthrough.</strong> Where do deals get stuck at Fresha — and why? Use real data or manager input to ground this in the actual sales cycle, not just theory.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#EA6A0A;">02</span>
+              <span class="idea-text"><strong>What great discovery looks like.</strong> Share examples of current state vs future state conversations. Ask the group: "What separates an average discovery from one that creates real urgency?"</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#EA6A0A;">03</span>
+              <span class="idea-text"><strong>Insight-based opener workshop.</strong> Reps draft their first bank of 3–5 openers using real Fresha data and industry insights. Each rep shares one opener with the group for peer feedback.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#EA6A0A;">04</span>
+              <span class="idea-text"><strong>Pipeline fundamentals.</strong> What does a healthy pipeline look like at Fresha? Introduce the volume and quality expectations early — before habits form.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- E -->
+      <div class="model-card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#8B5CF618;color:#7C3AED;">E</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#7C3AED;">Evaluation &amp; Reflection</div>
+            <div class="card-title">How to facilitate meaningful reflection</div>
+            <div class="card-owner">Facilitated by: You (Manager)</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#7C3AED;">01</span>
+              <span class="idea-text"><strong>Rep completes the Week 1 Readiness Checkpoint.</strong> Run the assessment and review it together. Treat it as a conversation starter, not a test — where are they confident? Where are they less sure?</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#7C3AED;">02</span>
+              <span class="idea-text"><strong>Ask this in your 1:1:</strong> "Can you walk me through the 4T framework without looking at your notes?" If they can explain it in their own words, it's landing. If not, that's your coaching focus.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#7C3AED;">03</span>
+              <span class="idea-text"><strong>Identify one coaching focus for Week 2.</strong> Based on the Readiness Checkpoint and your conversation, agree on one specific skill to sharpen next week. Name it clearly — "Next week we're going to work on Implication questions."</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#7C3AED;">04</span>
+              <span class="idea-text"><strong>Ask about confidence, not just knowledge.</strong> "Which stage of discovery do you feel least confident about, and why?" Confidence gaps are often different from knowledge gaps — and they matter more on a live call.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- L -->
+      <div class="model-card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#3B82F618;color:#2563EB;">L</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#2563EB;">Live Application</div>
+            <div class="card-title">Hands-on practice this week</div>
+            <div class="card-owner">Applied by: Rep, supported by Manager</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#2563EB;">01</span>
+              <span class="idea-text"><strong>Complete a call prep sheet using the 4T template.</strong> Before attempting any early calls, the rep maps out what they want to discover in each stage. Review it with them — is it curious enough, or is it leading straight to features?</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#2563EB;">02</span>
+              <span class="idea-text"><strong>Practice opener delivery.</strong> Give the rep 10 minutes with you or a peer to practise their insight-based opener out loud. The goal is muscle memory — not perfection, but something they can say without looking at notes.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#2563EB;">03</span>
+              <span class="idea-text"><strong>Attempt a listened-in call.</strong> If the timing is right, have the rep attempt their first call with you on mute. Brief them beforehand, debrief straight after. The experience matters more than the outcome.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#2563EB;">04</span>
+              <span class="idea-text"><strong>End-of-week learning share.</strong> In your 1:1, ask the rep to share their top three learning moments from anything they observed or tried this week. This builds the habit of self-directed reflection that compounds over six weeks.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CHECKPOINT -->
+    <div class="checkpoint-card">
+      <div class="checkpoint-header">
+        <div class="checkpoint-icon">✓</div>
+        <div>
+          <div class="checkpoint-title">Weekly Readiness Checkpoint — Week 1</div>
+          <div class="checkpoint-sub">Run your assessment at the end of the week</div>
+        </div>
+      </div>
+      <div class="checkpoint-content">
+        The Week 1 checkpoint tests the rep's foundational understanding of the sales process, the GAP selling mindset, the 4T framework, and insight-based openers. Use the assessment results in your 1:1 to set the coaching focus for Week 2.
+      </div>
+      <div class="checkpoint-focuses">
+        <span class="focus-tag">GAP Selling Mindset</span>
+        <span class="focus-tag">4T Framework</span>
+        <span class="focus-tag">Insight-Based Openers</span>
+        <span class="focus-tag">Pipeline Fundamentals</span>
+        <span class="focus-tag">Discovery Preparation</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ WEEK 2 ═══════════════ -->
+  <section class="week-panel" id="week-2">
+    <div class="week-header">
+      <div class="week-meta">
+        <span class="week-number">Week 2 of 6</span>
+        <span class="led-badge led-trainer">Trainer-Led</span>
+      </div>
+      <div class="week-theme">Demo, Objections, Negotiation, Closing &amp; Competitors</div>
+      <div class="week-desc">Reps move into the later stages of the sales cycle. This week is about understanding that a demo is not a product tour — it's a bridge between the prospect's gap and Fresha's solution. Your coaching focus is the discovery-to-demo transition.</div>
+
+      <div class="frameworks-row">
+        <span class="fw-row-label">Models:</span>
+        <div class="framework-badge">
+          <span class="fw-acronym" style="color:#EA6A0A;">P.A.I.N.</span>
+          <span class="fw-divider">|</span>
+          <span class="fw-stage">Demo</span>
+        </div>
+        <div class="framework-badge">
+          <span class="fw-acronym" style="color:#0891B2;">E.A.S.E.</span>
+          <span class="fw-divider">|</span>
+          <span class="fw-stage">Objection Handling</span>
+        </div>
+        <div class="framework-badge">
+          <span class="fw-acronym" style="color:#7C3AED;">P.A.C.E.</span>
+          <span class="fw-divider">|</span>
+          <span class="fw-stage">Negotiation</span>
+        </div>
+        <div class="framework-badge">
+          <span class="fw-acronym" style="color:#00956A;">E.A.R.N.</span>
+          <span class="fw-divider">|</span>
+          <span class="fw-stage">Closing</span>
+        </div>
+        <div class="framework-badge">
+          <span class="fw-acronym" style="color:#2563EB;">S.W.A.P.</span>
+          <span class="fw-divider">|</span>
+          <span class="fw-stage">Competitor Intel</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="model-grid">
+      <div class="model-card open">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#00B67A18;color:#00956A;">M</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#00956A;">Manager Coaching</div>
+            <div class="card-title">What to coach this week</div>
+            <div class="card-owner">Led by: You (Manager)</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#00956A;">01</span>
+              <span class="idea-text"><strong>Coach the discovery-to-demo transition.</strong> Before any demo, ask the rep: "Can you tell me the gap you uncovered?" If they can't articulate it in the prospect's own words, they're not ready to demo. This is the most important discipline to build now.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#00956A;">02</span>
+              <span class="idea-text"><strong>Review objection handling responses together.</strong> Go through the top 5 objections reps face at Fresha and ask the rep to respond to each one. Listen for generic answers — coach them to always use the prospect's own language in their response.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#00956A;">03</span>
+              <span class="idea-text"><strong>Share a real competitive moment from your experience.</strong> Tell a story about a time a competitor came up on a call — how did you handle it? What would you do differently now? This is more useful than a slide deck on competitors.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#00956A;">04</span>
+              <span class="idea-text"><strong>Introduce the "feature trap" concept.</strong> Great demos only show features that solve a problem you've already uncovered. Ask the rep: "If you had ten features to show, how would you decide which three to lead with for a specific prospect?"</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="model-card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#06B6D418;color:#0891B2;">O</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#0891B2;">Observation Task</div>
+            <div class="card-title">What the rep should observe this week</div>
+            <div class="card-owner">Arranged by: You (Manager)</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#0891B2;">01</span>
+              <span class="idea-text"><strong>Shadow a full sales conversation if possible.</strong> Ideally discovery + demo in one session or back-to-back. Ask them to observe: Where does the rep decide to shift from questions to demonstration?</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#0891B2;">02</span>
+              <span class="idea-text"><strong>Focus on language mirroring.</strong> Ask them to note at least two moments where the rep used the prospect's own words to position a feature or benefit. This is the most powerful technique in the demo — and it's often invisible until you know to look for it.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#0891B2;">03</span>
+              <span class="idea-text"><strong>Watch how price is introduced.</strong> What does the rep do to set up the pricing conversation? What comes immediately before it? The context around price matters as much as the number.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#0891B2;">04</span>
+              <span class="idea-text"><strong>Post-observation: let them go first.</strong> Before giving any feedback, ask the rep: "What did they do that you want to try?" Then add your own observations. Self-generated insight sticks better than manager feedback.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="model-card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#F9731618;color:#EA6A0A;">D</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#EA6A0A;">Discussion</div>
+            <div class="card-title">Trainer-led group discussions</div>
+            <div class="card-owner">Led by: Trainer</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#EA6A0A;">01</span>
+              <span class="idea-text"><strong>Live objection handling session.</strong> Trainer surfaces the top five objections Fresha reps face. Group works through responses in pairs, then shares back. Focus on language — not scripts, but principles.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#EA6A0A;">02</span>
+              <span class="idea-text"><strong>Competitive landscape session.</strong> What are the top three competitors to Fresha, and what is the single sharpest differentiator for each? Keep this practical — what would you actually say on a call?</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#EA6A0A;">03</span>
+              <span class="idea-text"><strong>Discovery-to-demo transition role play.</strong> Pairs practice the moment of transition: "Based on what you've told me, I'd like to show you how we'd solve X specifically..." The trainer coaches the group on how to make it feel natural.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#EA6A0A;">04</span>
+              <span class="idea-text"><strong>Closing language workshop.</strong> Group builds a shared bank of closing questions that feel confident and consultative, not pushy. Ask reps: "What does a natural close sound like to you?"</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="model-card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#8B5CF618;color:#7C3AED;">E</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#7C3AED;">Evaluation &amp; Reflection</div>
+            <div class="card-title">How to facilitate meaningful reflection</div>
+            <div class="card-owner">Facilitated by: You (Manager)</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#7C3AED;">01</span>
+              <span class="idea-text"><strong>Rep completes the Week 2 Readiness Checkpoint.</strong> Review it together. Pay particular attention to how they score themselves on demo readiness — confidence in this area often reveals whether Week 1's discovery knowledge is secure.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#7C3AED;">02</span>
+              <span class="idea-text"><strong>Ask this in your 1:1:</strong> "Which objections are you least confident handling right now? What's your plan for those?" Don't answer it for them — let them work it out, then add your perspective.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#7C3AED;">03</span>
+              <span class="idea-text"><strong>Demo confidence self-score.</strong> Ask the rep to rate their demo confidence out of 10. Then: "What would make it a 10?" This simple question often surfaces the exact coaching need for Week 3.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#7C3AED;">04</span>
+              <span class="idea-text"><strong>Name the Week 3 coaching focus.</strong> Based on Weeks 1–2, agree on the specific thing to improve next week. Be precise — "We're going to focus on the moment you transition into the demo" is more useful than "keep practising the demo."</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="model-card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#3B82F618;color:#2563EB;">L</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#2563EB;">Live Application</div>
+            <div class="card-title">Hands-on practice this week</div>
+            <div class="card-owner">Applied by: Rep, supported by Manager</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#2563EB;">01</span>
+              <span class="idea-text"><strong>Start making calls — aim for 3–10 live calls by end of week.</strong> These should be supervised or buddy-paired calls, not fully solo yet. The target isn't the number — it's getting reps used to real conversations while the methodology is fresh. Even three calls with a good debrief beats ten calls with none.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#2563EB;">02</span>
+              <span class="idea-text"><strong>Practice demo using a real discovery scenario.</strong> Ask the rep to deliver a 10-minute demo to you based on a scenario from a call or observation this week. They should only show features that solve problems they've actually "uncovered." Use the P.A.I.N. structure: Prime → Align → Impact → Next Step.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#2563EB;">03</span>
+              <span class="idea-text"><strong>Buddy system for first supervised calls.</strong> Pair the rep with a more experienced colleague for their first outbound attempts. Brief the buddy beforehand: one piece of positive feedback and one development point after each call, using the frameworks as the lens (D.I.A.L., O.P.E.N., 4T).</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#2563EB;">04</span>
+              <span class="idea-text"><strong>Write personal objection responses using E.A.S.E.</strong> Ask the rep to write their own responses to the top three objections they've already encountered or expect to face — Empathy, Assess, Solve, End. Review together. Are they using the prospect's language or defaulting to stock phrases?</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="checkpoint-card">
+      <div class="checkpoint-header">
+        <div class="checkpoint-icon">✓</div>
+        <div>
+          <div class="checkpoint-title">Weekly Readiness Checkpoint — Week 2</div>
+          <div class="checkpoint-sub">Run your assessment at the end of the week</div>
+        </div>
+      </div>
+      <div class="checkpoint-content">
+        The Week 2 checkpoint tests the rep's ability to handle the later stages of the sales cycle — demo delivery, objection handling, competitive positioning, and closing language. Use the results to set the live application focus for Week 3.
+      </div>
+      <div class="checkpoint-focuses">
+        <span class="focus-tag">Demo Structure</span>
+        <span class="focus-tag">Objection Handling</span>
+        <span class="focus-tag">Competitive Positioning</span>
+        <span class="focus-tag">Closing Language</span>
+        <span class="focus-tag">Discovery-to-Demo Transition</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ WEEK 3 ═══════════════ -->
+  <section class="week-panel" id="week-3">
+    <div class="week-header">
+      <div class="week-meta">
+        <span class="week-number">Week 3 of 6</span>
+        <span class="led-badge led-both">Manager + Trainer Support</span>
+      </div>
+      <div class="week-theme">First Solo Calls — Discovery Quality</div>
+      <div class="week-desc">The training wheels come off — this is the rep's first week making independent calls. Your coaching shifts from knowledge to behaviour: are the frameworks showing up on real calls? Focus on discovery quality and use the 4T as your coaching scorecard.</div>
+    </div>
+
+    <div class="model-grid">
+      <div class="model-card open">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#00B67A18;color:#00956A;">M</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#00956A;">Manager Coaching</div>
+            <div class="card-title">What to coach this week</div>
+            <div class="card-owner">Led by: You (Manager)</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#00956A;">01</span>
+              <span class="idea-text"><strong>Pre-call preparation reviews.</strong> Before any solo calls, sit down and review their prep together. Not to approve it, but to get them thinking clearly: "What gap are you trying to uncover? What Implication questions are you planning?"</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#00956A;">02</span>
+              <span class="idea-text"><strong>Score calls against the 4T framework.</strong> After each observed or recorded call, score 1–5 on each stage: Today, Trouble, True Cost, Tomorrow. Do it together, rep first. The conversation about the scores is the coaching.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#00956A;">03</span>
+              <span class="idea-text"><strong>Coach on True Cost (Implication) questions.</strong> This is the most commonly skipped stage. Ask the rep: "In your last call, when did you explore the cost of inaction?" If they didn't, that's this week's coaching focus.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#00956A;">04</span>
+              <span class="idea-text"><strong>Celebrate first wins explicitly.</strong> Name the specific moment, not just the outcome. "That question you asked in the True Cost stage — that's exactly what great discovery sounds like." This is how behaviour embeds.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="model-card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#06B6D418;color:#0891B2;">O</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#0891B2;">Observation Task</div>
+            <div class="card-title">What to observe in the rep's calls</div>
+            <div class="card-owner">Observed by: You (Manager)</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#0891B2;">01</span>
+              <span class="idea-text"><strong>Sit in on one live call (muted).</strong> Give structured feedback within the hour — not days later. Use the 4T scorecard as your structure. The faster the feedback lands after the call, the more useful it is.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#0891B2;">02</span>
+              <span class="idea-text"><strong>Ask the rep to record a call.</strong> Review it together — but start by asking them to self-critique. What do they think went well? What would they do differently? Self-generated insight is more durable than manager feedback.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#0891B2;">03</span>
+              <span class="idea-text"><strong>Look specifically for Implication questions.</strong> Are they asking "What does that cost you?" and "What happens if this continues?" — or are they identifying a problem and jumping to the solution? This is the single most common gap in Week 3.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#0891B2;">04</span>
+              <span class="idea-text"><strong>Compare to Weeks 1–2.</strong> What's transferred from the training into live calls? What hasn't shown up yet? This comparison helps you prioritise what to coach — not everything, just the highest-impact gap.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="model-card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#F9731618;color:#EA6A0A;">D</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#EA6A0A;">Discussion</div>
+            <div class="card-title">Trainer-led group discussions</div>
+            <div class="card-owner">Led by: Trainer, with Manager input</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#EA6A0A;">01</span>
+              <span class="idea-text"><strong>Group call review debrief.</strong> Listen to a shared, anonymised call recording as a group and score it together against the 4T framework. The discussion generated is more valuable than the score.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#EA6A0A;">02</span>
+              <span class="idea-text"><strong>Build a group "questions bank".</strong> What questions are unlocking great conversations? Every rep contributes one question that worked well in a real call this week. Build a shared resource from actual experience, not a template.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#EA6A0A;">03</span>
+              <span class="idea-text"><strong>Surface and address Week 3 blockers.</strong> What's making reps nervous? What's happening on calls that they didn't anticipate? Create space for honest sharing — the cohort will learn from each other's experiences.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#EA6A0A;">04</span>
+              <span class="idea-text"><strong>Early pipeline review.</strong> How are the first calls converting? Where are prospects dropping off? Use real data to ground the discussion — this is the first read on whether the methodology is translating to results.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="model-card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#8B5CF618;color:#7C3AED;">E</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#7C3AED;">Evaluation &amp; Reflection</div>
+            <div class="card-title">How to facilitate meaningful reflection</div>
+            <div class="card-owner">Facilitated by: You (Manager)</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#7C3AED;">01</span>
+              <span class="idea-text"><strong>Rep completes the Week 3 Readiness Checkpoint.</strong> This week the assessment should feel more about application than knowledge — are they connecting what they know to what they're doing on calls?</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#7C3AED;">02</span>
+              <span class="idea-text"><strong>Rep reviews their own calls and self-scores 4T stages.</strong> Where are they consistently strong? Where does the conversation break down? Patterns across multiple calls are more useful than feedback from a single call.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#7C3AED;">03</span>
+              <span class="idea-text"><strong>Ask in your 1:1:</strong> "What's one moment from a call this week you're genuinely proud of? What's one moment you'd do differently?" Two questions, both essential. The first builds confidence; the second builds awareness.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#7C3AED;">04</span>
+              <span class="idea-text"><strong>Set a specific, measurable coaching goal for Week 4.</strong> Make it behavioural: "Use at least two Implication questions in every call this week" is more useful than "get better at True Cost." Specificity is what makes coaching stick.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="model-card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#3B82F618;color:#2563EB;">L</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#2563EB;">Live Application</div>
+            <div class="card-title">Hands-on practice this week</div>
+            <div class="card-owner">Applied by: Rep, supported by Manager</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#2563EB;">01</span>
+              <span class="idea-text"><strong>Ramp up to a full call volume this week — target 15–25 calls.</strong> Week 3 is where activity really accelerates. The rep should be running independent discovery calls at near-full pace, with debriefs on at least 3–5 of them. Volume creates patterns; patterns create coaching opportunities.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#2563EB;">02</span>
+              <span class="idea-text"><strong>Debrief at least three calls this week using the 4T scorecard.</strong> Not every call — but at least three with structured feedback. A 10-minute debrief anchored to the framework does more for skill development than any training session. The rep self-scores first.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#2563EB;">03</span>
+              <span class="idea-text"><strong>Build a personal question bank from real calls.</strong> Ask the rep to write 10 discovery questions that have worked on actual calls this week, mapped to the 4T stages. Questions that came from live conversations are more useful than anything prepared in advance.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#2563EB;">04</span>
+              <span class="idea-text"><strong>Start pipeline logging in earnest.</strong> Every prospect from this week's calls goes into the pipeline with a clear next step and a date. Check it together — pipeline discipline is a habit much easier to build in Week 3 than to retrofit in Week 5.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="checkpoint-card">
+      <div class="checkpoint-header">
+        <div class="checkpoint-icon">✓</div>
+        <div>
+          <div class="checkpoint-title">Weekly Readiness Checkpoint — Week 3</div>
+          <div class="checkpoint-sub">Run your assessment at the end of the week</div>
+        </div>
+      </div>
+      <div class="checkpoint-content">
+        The Week 3 checkpoint shifts from knowledge to application — can the rep demonstrate that the 4T framework is showing up on real calls? Use the results alongside your own call observation data to build Week 4's coaching plan.
+      </div>
+      <div class="checkpoint-focuses">
+        <span class="focus-tag">4T Application in Live Calls</span>
+        <span class="focus-tag">Implication Questions</span>
+        <span class="focus-tag">Discovery Quality</span>
+        <span class="focus-tag">Pipeline Management</span>
+        <span class="focus-tag">Self-Awareness on Calls</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ WEEK 4 ═══════════════ -->
+  <section class="week-panel" id="week-4">
+    <div class="week-header">
+      <div class="week-meta">
+        <span class="week-number">Week 4 of 6</span>
+        <span class="led-badge led-manager">Manager-Led</span>
+      </div>
+      <div class="week-theme">Demo Confidence &amp; Discovery-to-Demo Transition</div>
+      <div class="week-desc">By Week 4, reps should be running discovery calls with growing confidence. Now the focus shifts to demo quality — specifically, whether they're building the demo around the gap they've uncovered, or defaulting to a product tour. Your coaching focus is connection: gap → demo → close.</div>
+    </div>
+
+    <div class="model-grid">
+      <div class="model-card open">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#00B67A18;color:#00956A;">M</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#00956A;">Manager Coaching</div>
+            <div class="card-title">What to coach this week</div>
+            <div class="card-owner">Led by: You (Manager)</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#00956A;">01</span>
+              <span class="idea-text"><strong>Coach the "only what you've discovered" demo rule.</strong> Ask the rep: "Of all the features you could show, which three solve the specific problems this prospect told you about?" If they can't answer that, discovery didn't go deep enough.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#00956A;">02</span>
+              <span class="idea-text"><strong>Review recorded demos or sit in live.</strong> Focus on one thing: Is the rep using the prospect's own words when positioning features? "You mentioned you're losing bookings at weekends — here's exactly how that changes with Fresha." That's the bridge.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#00956A;">03</span>
+              <span class="idea-text"><strong>Coach pipeline quality, not just quantity.</strong> Look at their pipeline together. Are the right deals moving forward? Are they hanging onto prospects who aren't progressing? Help them understand the difference between a full pipeline and a healthy one.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#00956A;">04</span>
+              <span class="idea-text"><strong>Introduce the "stretch challenge" for the week.</strong> Agree on one thing just outside their comfort zone — handling a specific objection they've been avoiding, or attempting a closing question they haven't tried yet. Name it, track it.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="model-card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#06B6D418;color:#0891B2;">O</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#0891B2;">Observation Task</div>
+            <div class="card-title">What to observe in the rep's demos</div>
+            <div class="card-owner">Observed by: You (Manager)</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#0891B2;">01</span>
+              <span class="idea-text"><strong>Observe a full demo — then give structured feedback.</strong> Use a simple observation framework: What went well? What was the key moment? What one thing would you change? Keep it focused — three coaching points is better than ten.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#0891B2;">02</span>
+              <span class="idea-text"><strong>Look for "feature dumping."</strong> Is the rep showing everything Fresha can do, or just what solves the prospect's specific gap? Feature dumping is the most common demo mistake at this stage — and it's often driven by nerves, not lack of knowledge.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#0891B2;">03</span>
+              <span class="idea-text"><strong>Let them self-assess first.</strong> After the demo, before you say anything: "How did you feel that went? What worked? What would you change?" The rep's self-assessment tells you more than the demo itself — especially about their awareness.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#0891B2;">04</span>
+              <span class="idea-text"><strong>Observe the closing moment.</strong> Does the rep ask for the next step clearly and confidently? Or do they leave it ambiguous? Vague next steps are one of the biggest conversion killers — coach directness as a kindness to the prospect.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="model-card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#F9731618;color:#EA6A0A;">D</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#EA6A0A;">Discussion</div>
+            <div class="card-title">Trainer-led group discussions</div>
+            <div class="card-owner">Led by: Trainer, with Manager input</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#EA6A0A;">01</span>
+              <span class="idea-text"><strong>Demo best practices share.</strong> Each rep shares one demo they've done this week — one thing that worked and one thing they'd improve. The group learns more from each other's live experience than from any training example.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#EA6A0A;">02</span>
+              <span class="idea-text"><strong>Live objection role play with a resistant prospect.</strong> Trainer plays a sceptical or price-focused prospect. Reps take turns handling the conversation. Debrief on language, confidence, and the ability to stay in discovery mode under pressure.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#EA6A0A;">03</span>
+              <span class="idea-text"><strong>Play a strong demo example.</strong> Share a recording of a genuinely good demo (real or constructed). Group picks out three specific techniques to adopt — not "it was great", but the exact moment and why it worked.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#EA6A0A;">04</span>
+              <span class="idea-text"><strong>Pipeline quality check-in.</strong> Trainer reviews overall pipeline health with the cohort. What's in? What's stalling? What needs a different approach? Normalise the pipeline conversation — it's the rep's most important professional habit.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="model-card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#8B5CF618;color:#7C3AED;">E</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#7C3AED;">Evaluation &amp; Reflection</div>
+            <div class="card-title">How to facilitate meaningful reflection</div>
+            <div class="card-owner">Facilitated by: You (Manager)</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#7C3AED;">01</span>
+              <span class="idea-text"><strong>Rep completes the Week 4 Readiness Checkpoint.</strong> Look specifically at demo-related questions — are they connecting product knowledge to sales conversation structure, or treating them as separate things?</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#7C3AED;">02</span>
+              <span class="idea-text"><strong>Ask this reflection question:</strong> "Are you presenting Fresha as the solution to their specific gap — or are you just showing what Fresha can do?" The difference between these two describes the difference between a good rep and a great one.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#7C3AED;">03</span>
+              <span class="idea-text"><strong>Pipeline 1:1 review.</strong> Ask the rep to walk you through every deal in their pipeline — what's the next step, and when? If they can't answer confidently for every deal, that's the coaching focus for Week 5.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#7C3AED;">04</span>
+              <span class="idea-text"><strong>Agree the Week 5 stretch challenge.</strong> Something just outside their comfort zone — an attempt to close a deal they've been nurturing, a call into a more complex prospect, or a full sales cycle from scratch without any observation support.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="model-card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#3B82F618;color:#2563EB;">L</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#2563EB;">Live Application</div>
+            <div class="card-title">Hands-on practice this week</div>
+            <div class="card-owner">Applied by: Rep, supported by Manager</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#2563EB;">01</span>
+              <span class="idea-text"><strong>Run 2–3 full demos this week.</strong> After each one, write a single sentence: "The gap I was bridging was: ..." This forces the rep to articulate the connection between discovery and demo. If they can't write the sentence, the demo was a feature tour.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#2563EB;">02</span>
+              <span class="idea-text"><strong>Write a personal "demo story."</strong> Using a real prospect scenario, the rep writes a compelling before-and-after narrative: "Here's what their world looked like before, here's what it looks like with Fresha." This becomes their go-to demo frame.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#2563EB;">03</span>
+              <span class="idea-text"><strong>Pipeline hygiene review.</strong> Rep cleans and updates their pipeline — every deal has a defined next step with a date. Remove or stage-change anything that doesn't have a genuine path forward. A clean pipeline is a thinking tool.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#2563EB;">04</span>
+              <span class="idea-text"><strong>Present your pipeline as if to a sales leader.</strong> In your 1:1, the rep walks you through their pipeline as if it's a formal pipeline review — not a chat, but a structured presentation. What's in, what's expected to close, and why. This builds commercial confidence.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="checkpoint-card">
+      <div class="checkpoint-header">
+        <div class="checkpoint-icon">✓</div>
+        <div>
+          <div class="checkpoint-title">Weekly Readiness Checkpoint — Week 4</div>
+          <div class="checkpoint-sub">Run your assessment at the end of the week</div>
+        </div>
+      </div>
+      <div class="checkpoint-content">
+        The Week 4 checkpoint assesses demo readiness, the discovery-to-demo transition, and pipeline quality. Use the results to gauge whether the rep is ready for the more independent work of Weeks 5 and 6.
+      </div>
+      <div class="checkpoint-focuses">
+        <span class="focus-tag">Demo Quality</span>
+        <span class="focus-tag">Gap-to-Feature Linking</span>
+        <span class="focus-tag">Closing Confidence</span>
+        <span class="focus-tag">Pipeline Quality</span>
+        <span class="focus-tag">Objection Handling Under Pressure</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ WEEK 5 ═══════════════ -->
+  <section class="week-panel" id="week-5">
+    <div class="week-header">
+      <div class="week-meta">
+        <span class="week-number">Week 5 of 6</span>
+        <span class="led-badge led-manager">Manager-Led</span>
+      </div>
+      <div class="week-theme">Pipeline Management &amp; Closing Discipline</div>
+      <div class="week-desc">By Week 5, reps should have a growing pipeline and the start of real conversion data. Your coaching now shifts to pipeline quality and closing discipline — helping the rep distinguish between deals that are real and deals that feel comfortable to keep hold of.</div>
+    </div>
+
+    <div class="model-grid">
+      <div class="model-card open">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#00B67A18;color:#00956A;">M</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#00956A;">Manager Coaching</div>
+            <div class="card-title">What to coach this week</div>
+            <div class="card-owner">Led by: You (Manager)</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#00956A;">01</span>
+              <span class="idea-text"><strong>Coach pipeline quality over pipeline volume.</strong> Review their pipeline and ask for every deal: "Why is this here? What's the genuine reason this prospect will buy?" Help them develop the judgement to qualify honestly rather than optimistically.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#00956A;">02</span>
+              <span class="idea-text"><strong>Introduce the disqualification conversation.</strong> "Not every prospect is a good prospect." Coach the rep on when to disengage — and why that's actually a confident sales behaviour, not a failure. Time spent on the wrong deals comes at a direct cost.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#00956A;">03</span>
+              <span class="idea-text"><strong>Coach deal velocity.</strong> How long does a typical Fresha deal take from first contact to close? Where is time being lost in the rep's pipeline? This is often where the answer to "why aren't I hitting numbers" lives.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#00956A;">04</span>
+              <span class="idea-text"><strong>Review a follow-up email together.</strong> What does a great follow-up look like? Does it summarise what was discussed, confirm what was agreed, and set the next step clearly? Read one of their recent follow-ups together and make it better in real time.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="model-card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#06B6D418;color:#0891B2;">O</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#0891B2;">Observation Task</div>
+            <div class="card-title">What to observe this week</div>
+            <div class="card-owner">Observed by: You (Manager)</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#0891B2;">01</span>
+              <span class="idea-text"><strong>Observe a follow-up or closing call.</strong> How confident is the rep in asking for the business? Are they clear about next steps, or do they leave the end of the call ambiguous? Ambiguity at close is the most common conversion failure in Week 5.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#0891B2;">02</span>
+              <span class="idea-text"><strong>Watch for "thinking about it" acceptance.</strong> When a prospect says "I'll think about it", does the rep gently diagnose the hesitation or accept it and move on? Teach the rep that "thinking about it" is often a hidden objection, not a genuine deferral.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#0891B2;">03</span>
+              <span class="idea-text"><strong>Pipeline conversation observation.</strong> Look at one stalling deal together. Ask questions rather than giving answers: "Why do you think it's stalling? What happened in the discovery stage? What does the prospect still need to feel confident to move forward?"</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#0891B2;">04</span>
+              <span class="idea-text"><strong>Ramp-to-target tracking observation.</strong> Alongside call quality, look at the numbers together. Where is the rep tracking against their ramp targets? What does the path to hitting them look like? Make this a normal part of your weekly 1:1 rhythm now.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="model-card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#F9731618;color:#EA6A0A;">D</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#EA6A0A;">Discussion</div>
+            <div class="card-title">Trainer-led group discussions</div>
+            <div class="card-owner">Led by: Trainer, with Manager input</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#EA6A0A;">01</span>
+              <span class="idea-text"><strong>Pipeline management workshop.</strong> How to qualify effectively, how to forecast honestly, and what makes a "real" opportunity vs a hopeful one. Bring real examples — the more grounded in actual deals, the more useful.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#EA6A0A;">02</span>
+              <span class="idea-text"><strong>Group deal review.</strong> Each rep brings one stalling deal to the group. The group helps diagnose: What's the real blocker? What hasn't been uncovered in the gap yet? What would you do next? This is coaching through peer intelligence.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#EA6A0A;">03</span>
+              <span class="idea-text"><strong>Follow-up excellence session.</strong> What does a best-in-class follow-up sequence look like from first contact to close? Build a shared example as a group. What's the right frequency? What should every message contain?</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#EA6A0A;">04</span>
+              <span class="idea-text"><strong>Early win/loss analysis.</strong> Look at Weeks 3–4 activity. What converted, and what didn't? What can the group learn from both? Create space for reps to be honest about losses — they're the most useful data in the room.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="model-card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#8B5CF618;color:#7C3AED;">E</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#7C3AED;">Evaluation &amp; Reflection</div>
+            <div class="card-title">How to facilitate meaningful reflection</div>
+            <div class="card-owner">Facilitated by: You (Manager)</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#7C3AED;">01</span>
+              <span class="idea-text"><strong>Rep completes the Week 5 Readiness Checkpoint.</strong> This is the penultimate checkpoint — are they demonstrating the full skill set across discovery, demo, pipeline management, and closing?</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#7C3AED;">02</span>
+              <span class="idea-text"><strong>Pipeline self-assessment.</strong> Ask the rep to score the health of each deal in their pipeline — how confident are they on each one, and why? Honest self-assessment of pipeline quality is one of the most commercially valuable skills a rep can develop.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#7C3AED;">03</span>
+              <span class="idea-text"><strong>Ask these two questions:</strong> "What's one deal you should probably let go of?" and "What's one deal you should be pushing harder on?" Both questions require commercial judgement — and that's exactly what you're coaching.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#7C3AED;">04</span>
+              <span class="idea-text"><strong>Ramp target review.</strong> Have an honest conversation about where they're tracking. Not just to hold them accountable — but to plan together. What needs to happen in Week 6 to set them up for a strong first full month?</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="model-card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#3B82F618;color:#2563EB;">L</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#2563EB;">Live Application</div>
+            <div class="card-title">Hands-on practice this week</div>
+            <div class="card-owner">Applied by: Rep, supported by Manager</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#2563EB;">01</span>
+              <span class="idea-text"><strong>Attempt at least one full sales cycle this week.</strong> Discovery through to a close attempt (even if multi-step). The goal isn't necessarily to close — it's to experience the full arc of a sales conversation under genuine conditions.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#2563EB;">02</span>
+              <span class="idea-text"><strong>Draft a personal follow-up email template.</strong> Using the principles from the group discussion, the rep writes their own template for a post-demo follow-up. Review it together — is it personal, clear, and does it confirm a specific next step?</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#2563EB;">03</span>
+              <span class="idea-text"><strong>Pipeline hygiene sprint.</strong> The rep cleans every deal in their pipeline — updates stage, confirms next step with a date, and removes anything cold. A clean, honest pipeline is a professional habit worth building a week before the programme ends.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#2563EB;">04</span>
+              <span class="idea-text"><strong>Pipeline forecast presentation.</strong> In your 1:1, the rep presents their Week 5 pipeline forecast as if to a senior sales leader: "Here's what I expect to close in the next two weeks, and here's why." The exercise builds commercial confidence and forecasting discipline.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="checkpoint-card">
+      <div class="checkpoint-header">
+        <div class="checkpoint-icon">✓</div>
+        <div>
+          <div class="checkpoint-title">Weekly Readiness Checkpoint — Week 5</div>
+          <div class="checkpoint-sub">Run your assessment at the end of the week</div>
+        </div>
+      </div>
+      <div class="checkpoint-content">
+        The Week 5 checkpoint assesses the rep's commercial readiness — pipeline management, closing discipline, and the ability to forecast honestly. Use the results to shape the final week's focus and the rep's 30-day development plan beyond the programme.
+      </div>
+      <div class="checkpoint-focuses">
+        <span class="focus-tag">Pipeline Quality</span>
+        <span class="focus-tag">Qualification Judgement</span>
+        <span class="focus-tag">Closing Confidence</span>
+        <span class="focus-tag">Follow-up Discipline</span>
+        <span class="focus-tag">Commercial Awareness</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ WEEK 6 ═══════════════ -->
+  <section class="week-panel" id="week-6">
+    <div class="week-header">
+      <div class="week-meta">
+        <span class="week-number">Week 6 of 6</span>
+        <span class="led-badge led-manager">Manager-Led</span>
+      </div>
+      <div class="week-theme">Full Cycle Confidence &amp; Independence</div>
+      <div class="week-desc">The final week. Your role shifts from coach to witness — this week is about stepping back and letting the rep show you what they've built over six weeks. The goal is independence: does the behaviour embed when you're not in the room?</div>
+    </div>
+
+    <div class="model-grid">
+      <div class="model-card open">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#00B67A18;color:#00956A;">M</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#00956A;">Manager Coaching</div>
+            <div class="card-title">What to coach this week</div>
+            <div class="card-owner">Led by: You (Manager)</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#00956A;">01</span>
+              <span class="idea-text"><strong>Run a full six-week review together.</strong> Not just performance data — wins, struggles, moments of genuine growth. This conversation sets the tone for your ongoing coaching relationship. Make it honest, warm, and forward-looking.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#00956A;">02</span>
+              <span class="idea-text"><strong>Step back from observation this week.</strong> Let the rep run their calls fully solo. Be available for debrief, but don't be in the room. Independence isn't given — it's practised. This is the week they practise it under real conditions.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#00956A;">03</span>
+              <span class="idea-text"><strong>Build a personal development plan together.</strong> What does "great" look like at 3 months, 6 months? What skills do they want to develop next? This conversation signals that the programme was a beginning, not a destination.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#00956A;">04</span>
+              <span class="idea-text"><strong>Recognise genuine growth publicly.</strong> Find one moment of real progress from the six weeks and name it to the broader team. Specific recognition ("the way you handled the True Cost stage in that call last week") is more meaningful than generic praise.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="model-card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#06B6D418;color:#0891B2;">O</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#0891B2;">Observation Task</div>
+            <div class="card-title">The final observation</div>
+            <div class="card-owner">Observed by: You (Manager)</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#0891B2;">01</span>
+              <span class="idea-text"><strong>One final observed call — rep leads fully.</strong> You're in the room but you don't intervene. Debrief only after. This is the capstone observation — it should feel different from Week 3. Let them feel the difference too.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#0891B2;">02</span>
+              <span class="idea-text"><strong>Focus on consistency.</strong> Is the behaviour embedding? Are the frameworks becoming instinctive, or are they still visible as techniques? Instinctive use of the 4T framework is the goal — that's when it starts to compound.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#0891B2;">03</span>
+              <span class="idea-text"><strong>Ask the rep to self-score the full call.</strong> Not just highlights — every stage, against the full 4T and SPIN criteria. Then add your own assessment. The difference between their self-score and yours is your coaching conversation.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#0891B2;">04</span>
+              <span class="idea-text"><strong>Go back to your Week 1 observation notes.</strong> How far have they come? Share the specific comparison with them — what you noticed then and what you're seeing now. This is one of the most powerful moments you can create as a manager.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="model-card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#F9731618;color:#EA6A0A;">D</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#EA6A0A;">Discussion</div>
+            <div class="card-title">Trainer-led group discussions</div>
+            <div class="card-owner">Led by: Trainer, with Manager input</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#EA6A0A;">01</span>
+              <span class="idea-text"><strong>Cohort celebration session.</strong> Each rep shares their single biggest win from the six weeks. Not the numbers — the moment. The call that clicked. The objection they finally handled well. The cohort finishes together, not just individually.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#EA6A0A;">02</span>
+              <span class="idea-text"><strong>"What I know now that I didn't know in Week 1."</strong> Each rep shares one insight that changed how they approach the role. This exercise generates peer learning and gives the trainer (and you) a genuine read on what landed across the programme.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#EA6A0A;">03</span>
+              <span class="idea-text"><strong>Forward look: what does the next 30 days look like?</strong> What support is available beyond the programme? What expectations are there for Month 2? This prevents the post-onboarding drop-off that happens when reps suddenly feel unsupported.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#EA6A0A;">04</span>
+              <span class="idea-text"><strong>Group goal-setting.</strong> Each rep commits to one personal development focus for their next 30 days — named, specific, and shared publicly with the cohort. Peer accountability is one of the strongest drivers of sustained behaviour change.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="model-card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#8B5CF618;color:#7C3AED;">E</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#7C3AED;">Evaluation &amp; Reflection</div>
+            <div class="card-title">How to close out the programme</div>
+            <div class="card-owner">Facilitated by: You (Manager)</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#7C3AED;">01</span>
+              <span class="idea-text"><strong>Rep completes the Week 6 (Final) Readiness Checkpoint.</strong> This is the full-programme assessment. Treat it as a celebration of how far they've come, not just an evaluation. Share the results alongside your own six-week coaching summary.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#7C3AED;">02</span>
+              <span class="idea-text"><strong>Full six-week self-reflection.</strong> Ask: "What are you most proud of from the last six weeks? And what do you still most want to get better at?" Both questions matter equally. One grounds them in their progress; the other keeps them hungry.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#7C3AED;">03</span>
+              <span class="idea-text"><strong>You write a formal six-week summary for the rep.</strong> Strengths, development areas, and recommended next steps. This is a gift to them — something tangible they can refer back to and use as a compass for the next quarter.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#7C3AED;">04</span>
+              <span class="idea-text"><strong>Thank someone who helped them.</strong> Ask the rep to identify one person who supported their development over the six weeks — a senior rep, a peer, a trainer — and ask them to share one specific piece of feedback with that person. This builds a culture of gratitude and growth.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="model-card">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-letter" style="background:#3B82F618;color:#2563EB;">L</div>
+          <div class="card-title-group">
+            <div class="card-label" style="color:#2563EB;">Live Application</div>
+            <div class="card-title">Capstone application tasks</div>
+            <div class="card-owner">Applied by: Rep, independently</div>
+          </div>
+          <span class="chevron">⌄</span>
+        </div>
+        <div class="card-body">
+          <ul class="ideas-list">
+            <li class="idea-item">
+              <span class="idea-num" style="color:#2563EB;">01</span>
+              <span class="idea-text"><strong>Run a full sales cycle call, completely solo.</strong> You're not there. This is the capstone live application — a discovery call, or discovery plus demo, run independently without any manager presence. Debrief together afterwards.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#2563EB;">02</span>
+              <span class="idea-text"><strong>Mini business review.</strong> Rep presents to you: pipeline status, conversion rates so far, and three lessons learned from the programme. This builds the habit of owning their own numbers — a skill that compounds every week beyond onboarding.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#2563EB;">03</span>
+              <span class="idea-text"><strong>Identify a peer mentor for ongoing development.</strong> Ask the rep to identify one more experienced colleague they'd like to continue learning from beyond the programme — and to arrange a regular coffee or call review with them.</span>
+            </li>
+            <li class="idea-item">
+              <span class="idea-num" style="color:#2563EB;">04</span>
+              <span class="idea-text"><strong>Write "My Sales Playbook."</strong> One page. The rep's personal approach to the full sales cycle in their own words — how they open, how they discover, how they demo, how they handle objections, how they close. Their own document, not a company one. This is what makes learning personal.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="checkpoint-card">
+      <div class="checkpoint-header">
+        <div class="checkpoint-icon">✓</div>
+        <div>
+          <div class="checkpoint-title">Weekly Readiness Checkpoint — Week 6 (Final)</div>
+          <div class="checkpoint-sub">The programme capstone assessment</div>
+        </div>
+      </div>
+      <div class="checkpoint-content">
+        The Week 6 checkpoint is the full-programme assessment — covering the complete Fresha sales methodology from pipeline and discovery through to demo, objection handling, pipeline management, and closing. Share the results alongside your six-week coaching summary to mark a meaningful end to onboarding and a clear start to what comes next.
+      </div>
+      <div class="checkpoint-focuses">
+        <span class="focus-tag">Full Sales Cycle</span>
+        <span class="focus-tag">Independence &amp; Consistency</span>
+        <span class="focus-tag">Commercial Confidence</span>
+        <span class="focus-tag">Pipeline Ownership</span>
+        <span class="focus-tag">Development Mindset</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  function showWeek(n) {
+    document.querySelectorAll('.week-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.week-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('week-' + n).classList.add('active');
+    document.querySelectorAll('.week-btn')[n - 1].classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function toggleCard(header) {
+    const card = header.closest('.model-card');
+    card.classList.toggle('open');
+  }
+
+  // Open first card in each panel by default (already done via HTML class)
+  // Keyboard navigation for week buttons
+  document.querySelectorAll('.week-btn').forEach((btn, i) => {
+    btn.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight') { showWeek(Math.min(i + 2, 6)); }
+      if (e.key === 'ArrowLeft')  { showWeek(Math.max(i, 1)); }
+    });
+  });
+</script>
+</body>
+</html>
